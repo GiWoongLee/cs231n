@@ -11,7 +11,10 @@ class Knn(object):
 		test_image = np.array([[1,-1,0],[-8,-8,-8],[12,18,15]])
 		# train knn with train_image
 		self.train(train_image,train_image_label)	
-		# predict test_image
+                # predict test_image
+                #print self.predict(test_image,2,0)
+                #print self.predict(test_image,2,1)
+                #print self.predict(test_image,2,2)
 
 	def train(self,X,y):
 		self.X_train = X
