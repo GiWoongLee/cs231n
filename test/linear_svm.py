@@ -14,14 +14,14 @@ def svm_loss_naive(W,X,y,reg):
 
 	# compute the loss and gradient
 	num_classes = W.shape[1]
-	num_train = W.shape[0]
+	num_train = X.shape[0]
 	loss = 0.0
-        loss_factor = 0 #count margin > 0 to reflect on dW
+        loss_factor = 0 #count margin > 0 to reflect on dW of correct class
 
 	for i in xrange(num_train):
 		scores = X[i].dot(W)
-		correct_class_score = scores[y[i]]
-                loss_factor = 0 # count (incorrect_class_score - correct_class_score > safety_margin)
+		correct_class_score = scores[y[i]] # y[i] indicates data_label
+                loss_factor = 0 # count (incorrect_class_score - correct_class_score + safety_margin > 0)
 		for j in xrange(num_classes):
 			if j == y[i]:
                             continue
