@@ -40,6 +40,7 @@ def softmax_loss_naive(W, X, y, reg):
       dW += (X[i].T).dot(dscores) # update dW by chain rule
 
   loss = loss/num_train + reg * np.sum(W*W)
+  dW = dW/num_train + 2*reg*W
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
@@ -71,7 +72,9 @@ def softmax_loss_vectorized(W, X, y, reg):
   dscores = prob_dist
   dscores[[0,-1],y] -= 1 # dscores = P(class scores) - 1 if(class=image_label)
   dW += (X.T).dot(dscores) #update dW by chain rule
-#############################################################################
+  dW = dW/num_train + 2*reg*W
+
+  #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
 

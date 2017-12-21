@@ -42,9 +42,11 @@ def svm_loss_naive(W, X, y, reg):
   # Right now the loss is a sum over all training examples, but we want it
   # to be an average instead so we divide by num_train.
   loss /= num_train
-
+  dW /= num_train
+  
   # Add regularization to the loss.
   loss += reg * np.sum(W * W)
+  dW += 2*reg*W
 
   return loss, dW
 
@@ -93,8 +95,8 @@ def svm_loss_vectorized(W, X, y, reg):
   for idx in y:
     dW[:,y[idx]] += (-1 * incorrect_classification_count[idx] * X[idx]).T
 
+  dW = dW/num_train + 2*reg*W
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
-
   return loss, dW
