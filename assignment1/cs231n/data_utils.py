@@ -23,7 +23,7 @@ def load_CIFAR_batch(filename):
     X = X.reshape(10000, 3, 32, 32).transpose(0,2,3,1).astype("float")
     Y = np.array(Y)
     return X, Y
-w
+
 def load_CIFAR10(ROOT):
   """ load all of cifar """
   xs = []
