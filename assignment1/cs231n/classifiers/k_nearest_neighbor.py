@@ -1,6 +1,6 @@
 import numpy as np
 from past.builtins import xrange
-
+from collections import Counter
 
 class KNearestNeighbor(object):
   """ a kNN classifier with L2 distance """ 
@@ -123,13 +123,15 @@ class KNearestNeighbor(object):
     # HINT: Try to formulate the l2 distance using matrix multiplication    #
     #       and two broadcast sums.                                         #
     #########################################################################
-    image_dimension = X.shape[1]
+    # NOTE: (a-b)2 = a2 + b2 - 2ab
+    dists = np.sqrt(-2 * np.dot(X,self.X_train.T)+ np.sum(X**2,axis=1)[:,np.newaxis]+np.sum(self.X_train**2,axis=1))
+    #image_dimension = X.shape[1]
     # expand test_image array into shape of (num_test,num_train,image_dimension)
-    expanded_test = np.repeat(X[:,np.newaxis,:],num_train,axis=1)
+    #expanded_test = np.repeat(X[:,np.newaxis,:],num_train,axis=1)
     # expand train_image array into shape of (num_test,num_train,image_dimension)
-    expanded_train = np.resize(self.X_train,(num_test,num_train,image_dimension))
+    #expanded_train = np.resize(self.X_train,(num_test,num_train,image_dimension))
     # calculate l2 distance by ndarray
-    dists = np.sqrt(np.sum(np.square(np.subtract(expanded_test,expanded_train)),axis=2))
+    #dists = np.sqrt(np.sum(np.square(np.subtract(expanded_test,expanded_train)),axis=2))
 
     #########################################################################
     #                         END OF YOUR CODE                              #
@@ -167,8 +169,7 @@ class KNearestNeighbor(object):
       # get labels of closest train images
       closest_y_label = map(lambda ele: self.y_train[ele],closest_y)
       # predict test image with most frequent value from closest train images
-      knn_labels = Counter(closest_y_label).most_common(1)
-      
+      #knn_labels = Counter(closest_y_label).most_common(1)
       #########################################################################
       # DONE:                                                                 #
       # Now that you have found the labels of the k nearest neighbors, you    #
@@ -177,9 +178,11 @@ class KNearestNeighbor(object):
       # label.                                                                #
       #########################################################################
       # Break ties by choosing the smaller label
-      if len(knn_labels) > 1 :
-        y_pred[i] = min(map(lambda label: label[0] , knn_labels))
-      else: y_pred[i] = knn_labels[0][0]
+      y_pred[i] = Counter(closest_y_label).most_common(1)[0][0]
+      #if len(knn_labels) > 1 :
+      #    print("knn_lables multiple values!!")
+      #    y_pred[i] = min(map(lambda label: label[0] , knn_labels))
+      #else: y_pred[i] = knn_labels[0][0]
       #########################################################################
       #                           END OF YOUR CODE                            # 
       #########################################################################
