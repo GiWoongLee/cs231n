@@ -36,9 +36,9 @@ def svm_loss_naive(W, X, y, reg):
       margin = scores[j] - correct_class_score + 1 # note delta = 1
       if margin > 0:
         loss += margin
-        np.add(dW[:,j],X[i].T)
+        dW[:,j] += X[i]
         incorrect_classification_count += 1
-    np.add(dW[:,y[i]],-1 * incorrect_classification_count * X[i].T)
+    dW[:,y[i]] += -1 * incorrect_classification_count * X[i]
   # Right now the loss is a sum over all training examples, but we want it
   # to be an average instead so we divide by num_train.
   loss /= num_train
@@ -62,10 +62,9 @@ def svm_loss_vectorized(W, X, y, reg):
   num_train = X.shape[0]
 
   scores = X.dot(W)
-  correct_class_scores = scores[[0,-1],y] 
-  margin = np.subtract(scores,correct_class_scores) + 1 # note delta as 1
-  margin[[0,-1],y] = 0 # set margin of correct_class 0
-  
+  correct_class_scores = scores[list(range(num_train)),y] 
+  margin = np.subtract(scores,correct_class_scores[:,np.newaxis]) + 1 # note delta as 1
+  margin[list(range(num_train)),y] = 0 # set margin of correct_class 0
   #############################################################################
   # DONE:                                                                     #
   # Implement a vectorized version of the structured SVM loss, storing the    #
@@ -88,13 +87,16 @@ def svm_loss_vectorized(W, X, y, reg):
   incorrect_classification_count = np.sum((margin>0),axis=1)
   
   # update gradient on incorrect_classification
-  for (image_idx, class_idx) in np.ndenumerate(margin):
-      if margin[image_idx][class_idx] >0 :
-          dW[:,class_idx] += X[image_idx].T
+  #for (image_idx, class_idx) in np.ndenumerate(margin):
+  #    print(margin[image_idx])
+  #    if margin[image_idx][class_idx] >0 :
+  #        dW[:,class_idx] += X[image_idx].T
 
-  for idx in y:
-    dW[:,y[idx]] += (-1 * incorrect_classification_count[idx] * X[idx]).T
-
+  X_mask = np.zeros(margin.shape) 
+  X_mask[margin>0] = 1
+  incorrect_counts = np.sum(X_mask,axis=1)
+  X_mask[np.arange(num_train),y] -= incorrect_counts
+  dW = X.T.dot(X_mask)
   dW = dW/num_train + 2*reg*W
   #############################################################################
   #                             END OF YOUR CODE                              #
